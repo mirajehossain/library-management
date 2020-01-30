@@ -10,6 +10,7 @@ module.exports = {
   userType: {
     admin: 'ADMIN',
     member: 'MEMBER',
+    author: 'AUTHOR',
   },
 
   bookType: {

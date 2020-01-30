@@ -1,5 +1,5 @@
 const express = require('express');
-const { authentication, joiValidator } = require('../middleware/index')
+const { authentication, joiValidator } = require('../middleware/index');
 const schema = require('../schema/index');
 const { JOI } = require('../config/constants');
 
