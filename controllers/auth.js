@@ -9,11 +9,10 @@ module.exports = {
   async login(req, res) {
     try {
       const payload = req.body;
-      const { password, ...user } = await UserModel.findOne({ email: payload.email }).lean();
-
+      const user = await UserModel.findOne({ email: payload.email }).lean();
       if (user) {
         console.log(user);
-        const matched = bcrypt.compareSync(payload.password, password);
+        const matched = bcrypt.compareSync(payload.password, user.password);
 
         if (matched) {
           const tokenObject = {

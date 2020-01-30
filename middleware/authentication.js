@@ -28,7 +28,7 @@ module.exports = {
 
   async isAdmin(req, res, next) {
     try {
-      const user = await UserModel.findOne({ _id: req.decoded._id });
+      const user = await UserModel.findOne({ email: req.decoded.email });
 
       if (user && (user.userType === userType.admin)) {
         return next();
@@ -42,9 +42,9 @@ module.exports = {
 
   async isMember(req, res, next) {
     try {
-      const user = await UserModel.findOne({ _id: req.decoded._id });
-
-      if (user && (user.userType === userType.member || userType.admin)) {
+      const user = await UserModel.findOne({ email: req.decoded.email });
+      console.log(user);
+      if (user && ((user.userType === userType.member) || (user.userType === userType.admin))) {
         return next();
       }
 
