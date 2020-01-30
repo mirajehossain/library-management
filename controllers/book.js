@@ -1,5 +1,7 @@
+const { ObjectId } = require('mongoose').Types;
 const { bookType, bookRequestStatus } = require('../config/constants');
 const { BookModel } = require('../models/book');
+const { BookLoanRequestModel } = require('../models/bookLoanRequest');
 const response = require('../helpers/response');
 
 
@@ -64,6 +66,64 @@ module.exports = {
       }
 
       return res.status(200).send(response.success('Book lists', books));
+    } catch (e) {
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async requestForBook(req, res) {
+    try {
+      const payload = req.body; // bookId, userId
+      const request = await BookLoanRequestModel.create(payload);
+      return res.status(200).send(response.success('New book request created', request));
+    } catch (e) {
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+  async bookRequests(req, res) {
+    try {
+      const { userId } = req.params; // userId
+      const request = await BookLoanRequestModel.aggregate([
+        { $match: { userId: ObjectId(userId), status: bookRequestStatus.pending } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+
+        {
+          $lookup: {
+            from: 'books',
+            localField: 'bookId',
+            foreignField: '_id',
+            as: 'book',
+          },
+        },
+        { $unwind: { path: '$book', preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            requestDate: 1,
+            taskDate: 1,
+            status: 1,
+            bookId: 1,
+            userId: 1,
+            'user.name': 1,
+            'user.mobile': 1,
+            'user.email': 1,
+            'user.image': 1,
+            'book.title': 1,
+            'book.authorName': 1,
+            'book.bookType': 1,
+            'book.publications': 1,
+
+          },
+        },
+      ]);
+      return res.status(200).send(response.success('Requested books', request));
     } catch (e) {
       return res.status(500).send(response.error('An error occur', `${e.message}`));
     }

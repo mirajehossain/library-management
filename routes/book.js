@@ -31,12 +31,17 @@ router.route('/:bookId').delete(
   joiValidator(schema.bookSchema.deleteBook, JOI.property.params),
   BookController.deleteBook,
 );
-//
-// router.route('/request-book').post(
-//   authentication.isMember,
-//   joiValidator(schema.bookSchema.requestForBook, JOI.property.params),
-//   BookController.deleteBook,
-// );
+
+router.route('/request-book').post(
+  authentication.isMember,
+  joiValidator(schema.bookSchema.requestForBook, JOI.property.body),
+  BookController.requestForBook,
+);
+
+router.route('/request-book/:userId').get(
+  authentication.isMember,
+  BookController.bookRequests,
+);
 
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { bookRequestStatus } = require('../config/constants');
 
 const { Schema } = mongoose;
 
@@ -9,11 +10,11 @@ const BookSchema = new Schema({
   },
   requestDate: { type: Date, default: new Date() },
   status: {
-    type: String, required: true, default: 'PENDING',
+    type: String, default: bookRequestStatus.pending,
   },
 
 }, { versionKey: false, timestamps: true });
 
 module.exports = {
-  BookModel: mongoose.model('BookLoanRequest', BookSchema),
+  BookLoanRequestModel: mongoose.model('BookLoanRequest', BookSchema),
 };

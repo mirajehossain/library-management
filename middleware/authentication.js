@@ -30,7 +30,7 @@ module.exports = {
     try {
       const user = await UserModel.findOne({ _id: req.decoded._id });
 
-      if (user && (user.type === userType.admin)) {
+      if (user && (user.userType === userType.admin)) {
         return next();
       }
 
@@ -44,7 +44,7 @@ module.exports = {
     try {
       const user = await UserModel.findOne({ _id: req.decoded._id });
 
-      if (user && (user.type === userType.member || userType.admin)) {
+      if (user && (user.userType === userType.member || userType.admin)) {
         return next();
       }
 
