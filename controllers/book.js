@@ -54,17 +54,61 @@ module.exports = {
   async getBooks(req, res) {
     try {
       const { pageNo = 1 } = req.params;
-      const { author } = req.query;
+      const { authorId } = req.query;
       const perPage = 20;
       const skip = perPage * (pageNo - 1);
       const limit = skip + perPage;
       let books;
-      if (author) {
-        books = await BookModel.find({ authorName: author }).skip(skip).limit(limit);
+      if (authorId) {
+        books = await BookModel.aggregate([
+          { $match: { authorId: ObjectId(authorId) } },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'authorId',
+              foreignField: '_id',
+              as: 'author',
+            },
+          },
+          { $unwind: { path: '$author', preserveNullAndEmptyArrays: true } },
+          {
+            $project: {
+              title: 1,
+              bookType: 1,
+              authorId: 1,
+              publications: 1,
+              'author.name': 1,
+              'author.mobile': 1,
+              'author.email': 1,
+              'author.image': 1,
+            },
+          },
+        ]).skip(skip).limit(limit);
       } else {
-        books = await BookModel.find({ authorName: author }).skip(skip).limit(limit);
+        books = await BookModel.aggregate([
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'authorId',
+              foreignField: '_id',
+              as: 'author',
+            },
+          },
+          { $unwind: { path: '$author', preserveNullAndEmptyArrays: true } },
+          {
+            $project: {
+              title: 1,
+              bookType: 1,
+              authorId: 1,
+              publications: 1,
+              'author.name': 1,
+              'author.mobile': 1,
+              'author.email': 1,
+              'author.image': 1,
+            },
+          },
+        ]).skip(skip).limit(limit);
       }
-
       return res.status(200).send(response.success('Book lists', books));
     } catch (e) {
       return res.status(500).send(response.error('An error occur', `${e.message}`));
@@ -85,7 +129,7 @@ module.exports = {
     try {
       const { bookRequestId } = req.params;
       const { status } = req.body; // status -> PENDING, APPROVE, REJECT,
-      const request = await BookLoanRequestModel.findOne({ _id: bookRequestId })
+      const request = await BookLoanRequestModel.findOne({ _id: bookRequestId });
 
       if (request) {
         const updated = await BookLoanRequestModel

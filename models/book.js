@@ -7,8 +7,8 @@ const BookSchema = new Schema({
   title: {
     type: String, trim: true, required: true,
   },
-  authorName: {
-    type: String, required: true, index: true,
+  authorId: {
+    type: Schema.ObjectId, required: true, index: true,
   },
   publications: {
     type: String, trim: true, required: true,

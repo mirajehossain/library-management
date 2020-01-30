@@ -3,14 +3,14 @@ const Joi = require('@hapi/joi');
 module.exports = {
   createBook: Joi.object({
     bookType: Joi.string().required(),
-    authorName: Joi.string().required(),
+    authorId: Joi.string().required(),
     title: Joi.string().required(),
     publications: Joi.string().required(),
   }),
 
   updateBook: Joi.object({
     bookType: Joi.string(),
-    authorName: Joi.string(),
+    authorId: Joi.string(),
     title: Joi.string(),
     publications: Joi.string(),
   }),
