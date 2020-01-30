@@ -23,4 +23,8 @@ module.exports = {
     bookId: Joi.string().required(),
     userId: Joi.string().required(),
   }),
+
+  updateBookRequest: Joi.object({
+    status: Joi.string().required(),
+  }),
 };

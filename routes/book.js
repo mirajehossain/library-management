@@ -43,5 +43,11 @@ router.route('/request-book/:userId').get(
   BookController.bookRequests,
 );
 
+router.route('/request-book/:bookRequestId').patch(
+  authentication.isAdmin,
+  joiValidator(schema.bookSchema.updateBookRequest, JOI.property.body),
+  BookController.updateBookRequest,
+);
+
 
 module.exports = router;

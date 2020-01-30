@@ -80,6 +80,25 @@ module.exports = {
       return res.status(500).send(response.error('An error occur', `${e.message}`));
     }
   },
+
+  async updateBookRequest(req, res) {
+    try {
+      const { bookRequestId } = req.params;
+      const { status } = req.body; // status -> PENDING, APPROVE, REJECT,
+      const request = await BookLoanRequestModel.findOne({ _id: bookRequestId })
+
+      if (request) {
+        const updated = await BookLoanRequestModel
+          .findOneAndUpdate({ _id: bookRequestId }, { status }, { new: true });
+
+        return res.status(200).send(response.success('Update book request', updated));
+      }
+      return res.status(200).send(response.success('Request not found', {}, false));
+    } catch (e) {
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
   async bookRequests(req, res) {
     try {
       const { userId } = req.params; // userId
