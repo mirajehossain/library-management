@@ -44,6 +44,31 @@ app.use('/api/v1/authors', AuthorRoute);
 app.use('/api/v1/books', BookRoute);
 app.use('/api/v1/book-loans', BookLoanRoute);
 
+/**
+ * Unhandled promise rejection handler
+ */
+process.on('unhandledRejection', (reason) => {
+  console.log('Unhandled Rejection at:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.log(`Error: ${err.message}`);
+});
+
+/**
+ * 404 not found route
+ */
+app.use((req, res) => res.status(404).send({ error: 'Not Found' }));
+
+app.use((err, req, res) => {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 server.listen(port, () => {
   console.info(`Server is running on ${process.env.HOST}:${process.env.PORT}`);
 });
