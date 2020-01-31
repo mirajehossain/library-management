@@ -1,6 +1,6 @@
+const path = require('path');
 const { UserModel } = require('../models/user');
 const response = require('../helpers/response');
-const middleware = require('../middleware/index');
 const { userType } = require('../config/constants');
 
 module.exports = {
@@ -63,6 +63,28 @@ module.exports = {
 
       await UserModel.findOneAndRemove({ _id: authorId });
       return res.status(200).send(response.success('Author deleted successfully'));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async uploadImage(req, res) {
+    try {
+      const { userId } = req.params;
+      const user = await UserModel.findOne({ _id: userId }).lean();
+
+      if (!user) {
+        return res.status(200).send(response.success('User not found', {}, false));
+      }
+
+      const fileName = req.file.originalname;
+      const sourcePath = `http://${path.join(`${req.headers.host}/${fileName}`)}`;
+      console.log(sourcePath);
+
+      const updatedUser = await UserModel
+        .findOneAndUpdate({ _id: userId }, { image: sourcePath }, { new: true });
+      return res.status(200).send(response.success('Profile image upload successfully', updatedUser));
     } catch (e) {
       console.log(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));
