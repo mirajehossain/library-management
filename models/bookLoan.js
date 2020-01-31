@@ -9,11 +9,12 @@ const BookSchema = new Schema({
   },
   loanDate: { type: Date, default: new Date() },
   isReturned: {
-    type: Boolean, required: true, default: false,
+    type: Boolean, default: false,
   },
+  returnedAt: { type: Date },
 
 }, { versionKey: false, timestamps: true });
 
 module.exports = {
-  BookModel: mongoose.model('BookLoan', BookSchema),
+  BookLoanModel: mongoose.model('BookLoan', BookSchema),
 };
