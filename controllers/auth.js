@@ -83,7 +83,7 @@ module.exports = {
         };
 
         const accessToken = middleware.authentication.generateToken(tokenObject);
-        return res.status(200).send(response.success('Successfully registered new adminn', { accessToken }));
+        return res.status(200).send(response.success('Successfully registered new admin', { accessToken }));
       }
       return res.status(200).json(response.error('Email already used', 'Email already used'));
     } catch (e) {

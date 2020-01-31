@@ -118,9 +118,26 @@ module.exports = {
     }
   },
 
+  /**
+   * Request for a new book
+   * @param req
+   * @param res
+   * @returns {Promise<*|void>}
+   */
   async requestForBook(req, res) {
     try {
       const payload = req.body; // bookId, userId
+      const checkRequest = await BookLoanRequestModel
+        .findOne({
+          userId: payload.userId,
+          bookId: payload.bookId,
+          status: bookRequestStatus.pending,
+        });
+
+      if (checkRequest) {
+        return res.status(200).send(response.success('This book is already requested for loan', {}, false));
+      }
+
       const request = await BookLoanRequestModel.create(payload);
       return res.status(200).send(response.success('New book request created', request));
     } catch (e) {
@@ -128,6 +145,12 @@ module.exports = {
     }
   },
 
+  /**
+   * Approve/ Reject book request
+   * @param req
+   * @param res
+   * @returns {Promise<*|void>}
+   */
   async updateBookRequest(req, res) {
     try {
       const { bookRequestId } = req.params;
@@ -154,6 +177,12 @@ module.exports = {
     }
   },
 
+  /**
+   * Fetch all pending book requested
+   * @param req
+   * @param res
+   * @returns {Promise<*|void>}
+   */
   async bookRequests(req, res) {
     try {
       const { userId } = req.params; // userId
@@ -183,7 +212,7 @@ module.exports = {
                     { $match: { $expr: { $eq: ['$_id', '$$authorId'] } } },
                     {
                       $project: {
-                        _id: 1, name: 1, images: 1, mobile: 1, email: 1,
+                        _id: 1, name: 1, image: 1, mobile: 1, email: 1,
                       },
                     },
                   ],
@@ -227,6 +256,12 @@ module.exports = {
     }
   },
 
+  /**
+   * Get list of book loans
+   * @param req
+   * @param res
+   * @returns {Promise<*|void>}
+   */
   async getBookLoans(req, res) {
     try {
       const { userId } = req.params; // userId
@@ -246,7 +281,7 @@ module.exports = {
                     { $match: { $expr: { $eq: ['$_id', '$$authorId'] } } },
                     {
                       $project: {
-                        _id: 1, name: 1, images: 1, mobile: 1, email: 1,
+                        _id: 1, name: 1, image: 1, mobile: 1, email: 1,
                       },
                     },
                   ],
@@ -271,7 +306,6 @@ module.exports = {
             bookId: 1,
             userId: 1,
             'book.title': 1,
-            'book.authorName': 1,
             'book.bookType': 1,
             'book.publications': 1,
             'book.author': 1,
@@ -285,6 +319,12 @@ module.exports = {
     }
   },
 
+  /**
+   * Generate Excel report for all type of Book loans
+   * @param req
+   * @param res
+   * @returns {Promise<*|void>}
+   */
   async generateBookLoansExcel(req, res) {
     try {
       const books = await BookLoanModel.aggregate([
@@ -311,7 +351,7 @@ module.exports = {
                     { $match: { $expr: { $eq: ['$_id', '$$authorId'] } } },
                     {
                       $project: {
-                        _id: 1, name: 1, images: 1, mobile: 1, email: 1,
+                        _id: 1, name: 1, image: 1, mobile: 1, email: 1,
                       },
                     },
                   ],
@@ -368,6 +408,12 @@ module.exports = {
     }
   },
 
+  /**
+   * Return book and update status for loan book with return date
+   * @param req
+   * @param res
+   * @returns {Promise<*|void>}
+   */
   async returnBook(req, res) {
     try {
       const { userId, bookId } = req.params; // userId, bookId

@@ -2,35 +2,35 @@ const express = require('express');
 const middleware = require('../middleware/index');
 const schema = require('../schema/index');
 const { JOI } = require('../config/constants');
-const uploadImage = require('../utils/utils');
 
 const UserController = require('../controllers/user');
 
 const router = express.Router();
 
+
 router.get('/', (req, res) => {
-  res.send({ message: 'User route' });
+  res.send({ message: 'Authors route' });
 });
 
-router.post('/upload-image/:userId',
-  middleware.authentication.isMember,
-  uploadImage.single('image'),
-  UserController.uploadImage);
 
+// get authors profile
 router.get('/get-author/:authorId',
-  middleware.authentication.isAdmin,
+  middleware.authentication.isMember,
   UserController.getAuthor);
 
+// create new author
 router.post('/create-author',
   middleware.authentication.isAdmin,
   middleware.joiValidator(schema.userSchema.createAuthor, JOI.property.body),
   UserController.createAuthor);
 
+// update author
 router.patch('/update-author/:authorId',
   middleware.authentication.isAdmin,
   middleware.joiValidator(schema.userSchema.updateAuthor, JOI.property.body),
   UserController.updateAuthor);
 
+// delete author
 router.delete('/delete-author/:authorId',
   middleware.authentication.isAdmin,
   UserController.deleteAuthor);

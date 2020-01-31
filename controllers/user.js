@@ -15,7 +15,7 @@ module.exports = {
       }
 
       const author = await UserModel.create(payload);
-      return res.status(200).send(response.success('new author created', author, true));
+      return res.status(200).send(response.success('New author created', author, true));
     } catch (e) {
       console.log(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));
@@ -27,6 +27,17 @@ module.exports = {
       const { authorId } = req.params;
       const author = await UserModel.find({ _id: authorId, userType: userType.author });
       return res.status(200).send(response.success('Author profile', author, true));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async getMember(req, res) {
+    try {
+      const { memberId } = req.params;
+      const member = await UserModel.find({ _id: memberId, userType: userType.member });
+      return res.status(200).send(response.success('Member profile', member, true));
     } catch (e) {
       console.log(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));
@@ -80,10 +91,10 @@ module.exports = {
 
       const fileName = req.file.originalname;
       const sourcePath = `http://${path.join(`${req.headers.host}/${fileName}`)}`;
-      console.log(sourcePath);
 
       const updatedUser = await UserModel
         .findOneAndUpdate({ _id: userId }, { image: sourcePath }, { new: true });
+
       return res.status(200).send(response.success('Profile image upload successfully', updatedUser));
     } catch (e) {
       console.log(e);
