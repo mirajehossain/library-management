@@ -1,5 +1,7 @@
+const XLSX = require('xlsx');
+const fs = require('fs');
 const { ObjectId } = require('mongoose').Types;
-const { bookType, bookRequestStatus } = require('../config/constants');
+const { bookRequestStatus } = require('../config/constants');
 const { BookModel } = require('../models/book');
 const { BookLoanRequestModel } = require('../models/bookLoanRequest');
 const { BookLoanModel } = require('../models/bookLoan');
@@ -170,12 +172,36 @@ module.exports = {
         {
           $lookup: {
             from: 'books',
-            localField: 'bookId',
-            foreignField: '_id',
+            let: { bookId: '$bookId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$bookId'] } } },
+              {
+                $lookup: {
+                  from: 'users',
+                  let: { authorId: '$authorId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$authorId'] } } },
+                    {
+                      $project: {
+                        _id: 1, name: 1, images: 1, mobile: 1, email: 1,
+                      },
+                    },
+                  ],
+                  as: 'author',
+                },
+              },
+              { $unwind: { path: '$author', preserveNullAndEmptyArrays: true } },
+              {
+                $project: {
+                  title: 1, publications: 1, bookType: 1, author: '$author',
+                },
+              },
+            ],
             as: 'book',
           },
         },
         { $unwind: { path: '$book', preserveNullAndEmptyArrays: true } },
+
         {
           $project: {
             requestDate: 1,
@@ -188,9 +214,9 @@ module.exports = {
             'user.email': 1,
             'user.image': 1,
             'book.title': 1,
-            'book.authorName': 1,
             'book.bookType': 1,
             'book.publications': 1,
+            'book.author': 1,
 
           },
         },
@@ -255,6 +281,89 @@ module.exports = {
       ]);
       return res.status(200).send(response.success('Loan books', books));
     } catch (e) {
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async generateBookLoansExcel(req, res) {
+    try {
+      const books = await BookLoanModel.aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+        {
+          $lookup: {
+            from: 'books',
+            let: { bookId: '$bookId' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$bookId'] } } },
+              {
+                $lookup: {
+                  from: 'users',
+                  let: { authorId: '$authorId' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$_id', '$$authorId'] } } },
+                    {
+                      $project: {
+                        _id: 1, name: 1, images: 1, mobile: 1, email: 1,
+                      },
+                    },
+                  ],
+                  as: 'author',
+                },
+              },
+              { $unwind: { path: '$author', preserveNullAndEmptyArrays: true } },
+              {
+                $project: {
+                  title: 1, publications: 1, bookType: 1, author: '$author',
+                },
+              },
+            ],
+            as: 'book',
+          },
+        },
+        { $unwind: { path: '$book', preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            _id: 0,
+            loanDate: 1,
+            isReturned: 1,
+            returnedAt: 1,
+            bookTitle: '$book.title',
+            authorName: '$book.author.name',
+            authorMobile: '$book.author.mobile',
+            bookType: '$book.bookType',
+            publications: '$book.publications',
+            userName: '$user.name',
+            userEmail: '$user.email',
+            userMobile: '$user.mobile',
+          },
+        },
+      ]);
+
+      /* make the worksheet */
+      const ws = XLSX.utils.json_to_sheet(books);
+
+      /* add to workbook */
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'BookLoans');
+
+      /* write workbook */
+      const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' }); // generate a nodejs buffer
+
+      fs.writeFile('book-loans.xls', buf, (err) => {
+        if (err) console.log(err);
+      });
+
+      return res.status(200).send(response.success('Book loans excel sheet generate succesfully', {}));
+    } catch (e) {
+      console.error(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));
     }
   },

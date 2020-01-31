@@ -57,15 +57,20 @@ router.route('/request-book/:bookRequestId').patch(
 );
 
 
-router.route('/book-loans/:userId').get(
-  authentication.isMember,
-  BookController.getBookLoans,
-);
 
 router.route('/return-book/:userId/:bookId').patch(
   authentication.isAdmin,
   BookController.returnBook,
 );
 
+router.route('/book-loans/generate-excel').get(
+  authentication.isAdmin,
+  BookController.generateBookLoansExcel,
+);
+
+router.route('/book-loans/:userId').get(
+  authentication.isMember,
+  BookController.getBookLoans,
+);
 
 module.exports = router;
