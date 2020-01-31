@@ -14,6 +14,10 @@ router.get('/get-member/:userId',
   middleware.authentication.isMember,
   UserController.getMember);
 
+router.patch('/get-member/:userId',
+  middleware.authentication.isMember,
+  UserController.getMember);
+
 // upload admin/member/author image
 router.post('/upload-image/:userId',
   middleware.authentication.isMember,

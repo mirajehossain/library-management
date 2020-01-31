@@ -35,8 +35,8 @@ module.exports = {
 
   async getMember(req, res) {
     try {
-      const { memberId } = req.params;
-      const member = await UserModel.find({ _id: memberId, userType: userType.member });
+      const { userId } = req.params;
+      const member = await UserModel.findOne({ _id: userId });
       return res.status(200).send(response.success('Member profile', member, true));
     } catch (e) {
       console.log(e);

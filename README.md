@@ -36,6 +36,7 @@ url: `http://localhost:8000`
 -------------------------------------------------------------
 > /api/v1/users
 
+- [GET] /api/v1/users/get-member/{{userId}}
 - [POST] /api/v1/users/upload-image/{{userId}}
 
 -------------------------------------------------------------
@@ -66,5 +67,7 @@ url: `http://localhost:8000`
 - [PATCH] /api/v1/book-loans/return-book/{{userId}}/{{bookId}}
 - [GET] /api/v1/book-loans/generate-excel
 ```
-
+```
+    Postman link: https://www.getpostman.com/collections/c45e29cb61866252712f
+```
 ##### THANKS
