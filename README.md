@@ -2,8 +2,8 @@
 
 ### Installation
 ```
- git clone https://mirajehossain@bitbucket.org/mirajehossain/library.git
- cd library
+ git clone https://github.com/mirajehossain/library-management.git
+ cd library-management
  npm i
 ```
 
