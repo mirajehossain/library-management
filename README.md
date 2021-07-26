@@ -1,4 +1,25 @@
-# Library Management System API
+# Library Management System
+## Create a RESTful API with the following resources
+
+- Books
+- Authors
+- Book-Loans
+- Users
+
+## Specification
+### The purpose of the API is to provide a management system for a library. There are two types of users in a Library.
+
+- Library Member
+Browse books, authors, request and view Book-Loans
+
+- Library Admin
+Create, update, remove Books and Authors. Accepet, reject Book-Loan requests. Update Book-Loan when book is returned
+
+### In addtion to providing the basic RESTful API endpoints and their role based access specified above, your API should also have the following features
+- Token Based Authentication (timeout can be as much as you wish)
+- Profile image upload for users (store image anywhere you like)
+- Browse books by author
+- Excel export for Book-Loans data (only Library Admin)
 
 ### Installation
 ```
