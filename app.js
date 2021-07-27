@@ -36,7 +36,7 @@ app.use('/', express.static(path.join(`${__dirname}/uploads`)));
 
 
 // Routing
-app.use('/api', indexRoute);
+app.use('/', indexRoute);
 app.use('/api/auth/', AuthRoute);
 app.use('/api/v1/*', authentication.validateToken);
 app.use('/api/v1/users', UserRoute);
