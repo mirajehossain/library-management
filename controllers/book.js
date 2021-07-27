@@ -15,9 +15,9 @@ module.exports = {
       const book = await BookModel.findOne({ title: payload.title });
       if (!book) {
         const newBook = await BookModel.create(payload);
-        return res.status(200).send(response.success('New book created!', { ...newBook.toObject() }));
+        return res.status(201).send(response.success('New book created!', newBook));
       }
-      return res.status(200).send(response.success('Book tite already exist, book title can not be duplicate!', {}, false));
+      return res.status(400).send(response.success('Book title already exist, book title can not be duplicate!', {}, false));
     } catch (e) {
       return res.status(500).send(response.error('An error occur', `${e.message}`));
     }
@@ -34,7 +34,7 @@ module.exports = {
           .findOneAndUpdate({ _id: bookId }, payload, { new: true });
         return res.status(200).send(response.success('Book successfully updated!', { ...updatedBook.toObject() }));
       }
-      return res.status(200).send(response.success('Book not found', {}, false));
+      return res.status(400).send(response.success('Book not found', {}, false));
     } catch (e) {
       return res.status(500).send(response.error('An error occur', `${e.message}`));
     }
@@ -48,7 +48,7 @@ module.exports = {
         await BookModel.findOneAndRemove({ _id: bookId });
         return res.status(200).send(response.success('Book successfully deleted!', { }));
       }
-      return res.status(200).send(response.success('Book not found', {}, false));
+      return res.status(400).send(response.success('Book not found', {}, false));
     } catch (e) {
       return res.status(500).send(response.error('An error occur', `${e.message}`));
     }
@@ -56,8 +56,7 @@ module.exports = {
 
   async getBooks(req, res) {
     try {
-      const { pageNo = 1 } = req.params;
-      const { authorId } = req.query;
+      const { authorId, pageNo = 1 } = req.query;
       const perPage = 20;
       const skip = perPage * (pageNo - 1);
       const limit = skip + perPage;
@@ -135,7 +134,7 @@ module.exports = {
         });
 
       if (checkRequest) {
-        return res.status(200).send(response.success('This book is already requested for loan', {}, false));
+        return res.status(400).send(response.success('This book is already requested for loan', {}, false));
       }
 
       const request = await BookLoanRequestModel.create(payload);
@@ -171,7 +170,7 @@ module.exports = {
         }
         return res.status(200).send(response.success('Update book request', updated));
       }
-      return res.status(200).send(response.success('Loan request not found', {}, false));
+      return res.status(400).send(response.success('Loan request not found', {}, false));
     } catch (e) {
       return res.status(500).send(response.error('An error occur', `${e.message}`));
     }

@@ -72,7 +72,7 @@ url: `http://localhost:8000`
 > /api/v1/books
 
 - [GET] /api/v1/books
-- [GET] /api/v1/books/{{pageNo}}/?authorId={{authorId}}
+- [GET] /api/v1/books/?pageNo={{pageNo}}&authorId={{authorId}}
 - [POST] /api/v1/books
 - [PATCH] /api/v1/books/{{bookId}}
 - [DELETE] /api/v1/books/{{bookId}}

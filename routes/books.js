@@ -7,10 +7,9 @@ const router = express.Router();
 
 const BookController = require('../controllers/book');
 
-router.route('/').get((req, res) => res.json({ title: 'Hello world, Welcome to library API' }));
 
 // fetch book list, admin/member can access this route
-router.route('/:pageNo').get(
+router.route('/').get(
   authentication.isMember,
   BookController.getBooks,
 );
