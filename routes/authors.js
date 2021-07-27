@@ -1,7 +1,7 @@
 const express = require('express');
-const middleware = require('../middleware/index');
+const { authentication, joiValidator } = require('../middleware/index');
 const schema = require('../schema/index');
-const { JOI } = require('../config/constants');
+const { JOI, userType } = require('../config/constants');
 
 const UserController = require('../controllers/user');
 
@@ -15,24 +15,24 @@ router.get('/', (req, res) => {
 
 // get authors profile
 router.get('/get-author/:authorId',
-  middleware.authentication.isMember,
+  authentication.isAuthorized(userType.admin, userType.author, userType.member),
   UserController.getAuthor);
 
 // create new author
 router.post('/create-author',
-  middleware.authentication.isAdmin,
-  middleware.joiValidator(schema.userSchema.createAuthor, JOI.property.body),
+  authentication.isAuthorized(userType.admin),
+  joiValidator(schema.userSchema.createAuthor, JOI.property.body),
   UserController.createAuthor);
 
 // update author
 router.patch('/update-author/:authorId',
-  middleware.authentication.isAdmin,
-  middleware.joiValidator(schema.userSchema.updateAuthor, JOI.property.body),
+  authentication.isAuthorized(userType.admin),
+  joiValidator(schema.userSchema.updateAuthor, JOI.property.body),
   UserController.updateAuthor);
 
 // delete author
 router.delete('/delete-author/:authorId',
-  middleware.authentication.isAdmin,
+  authentication.isAuthorized(userType.admin),
   UserController.deleteAuthor);
 
 

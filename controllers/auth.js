@@ -11,7 +11,6 @@ module.exports = {
       const payload = req.body;
       const user = await UserModel.findOne({ email: payload.email }).lean();
       if (user) {
-        console.log(user);
         const matched = bcrypt.compareSync(payload.password, user.password);
 
         if (matched) {
@@ -25,9 +24,9 @@ module.exports = {
           const accessToken = middleware.authentication.generateToken(tokenObject);
           return res.status(200).send(response.success('Successfully logged-in', { accessToken, ...user }));
         }
-        return res.status(200).json(response.error(false, 'Incorrect email or password', 'Incorrect email or password '));
+        return res.status(400).json(response.error(false, 'Incorrect email or password', 'Incorrect email or password '));
       }
-      return res.status(200).send(response.success('User not exist', {}, false));
+      return res.status(400).send(response.success('User not exist', {}, false));
     } catch (e) {
       console.log(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));
@@ -56,7 +55,7 @@ module.exports = {
         const accessToken = middleware.authentication.generateToken(tokenObject);
         return res.status(200).send(response.success('Successfully registered', { accessToken }));
       }
-      return res.status(200).json(response.error('Email already used', 'Email already used'));
+      return res.status(400).json(response.error('Email already used', 'Email already used'));
     } catch (e) {
       console.log(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));
@@ -85,7 +84,7 @@ module.exports = {
         const accessToken = middleware.authentication.generateToken(tokenObject);
         return res.status(200).send(response.success('Successfully registered new admin', { accessToken }));
       }
-      return res.status(200).json(response.error('Email already used', 'Email already used'));
+      return res.status(400).json(response.error('Email already used', 'Email already used'));
     } catch (e) {
       console.log(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));

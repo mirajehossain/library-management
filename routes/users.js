@@ -1,8 +1,9 @@
 const express = require('express');
-const middleware = require('../middleware/index');
+const { authentication} = require('../middleware/index');
 const uploadImage = require('../utils/utils');
 
 const UserController = require('../controllers/user');
+const { userType } = require('../config/constants');
 
 const router = express.Router();
 
@@ -11,16 +12,16 @@ router.get('/', (req, res) => {
 });
 
 router.get('/get-member/:userId',
-  middleware.authentication.isMember,
+  authentication.isAuthorized(userType.admin),
   UserController.getMember);
 
 router.patch('/get-member/:userId',
-  middleware.authentication.isMember,
+  authentication.isAuthorized(userType.admin, userType.member),
   UserController.getMember);
 
 // upload admin/member/author image
 router.post('/upload-image/:userId',
-  middleware.authentication.isMember,
+  authentication.isAuthorized(userType.admin, userType.member),
   uploadImage.single('image'),
   UserController.uploadImage);
 

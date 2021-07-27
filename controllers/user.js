@@ -11,7 +11,7 @@ module.exports = {
       payload.userType = userType.author;
 
       if (user) {
-        return res.status(200).send(response.success('Author already create with this email', {}, false));
+        return res.status(400).send(response.success('Author already create with this email', {}, false));
       }
 
       const author = await UserModel.create(payload);
@@ -51,7 +51,7 @@ module.exports = {
       const user = await UserModel.findOne({ _id: authorId }).lean();
 
       if (!user) {
-        return res.status(200).send(response.success('Author not found', {}, false));
+        return res.status(400).send(response.success('Author not found', {}, false));
       }
 
       const author = await UserModel.findOneAndUpdate({ _id: authorId }, payload, { new: true });
@@ -69,7 +69,7 @@ module.exports = {
       const user = await UserModel.findOne({ _id: authorId }).lean();
 
       if (!user) {
-        return res.status(200).send(response.success('Author not found', {}, false));
+        return res.status(400).send(response.success('Author not found', {}, false));
       }
 
       await UserModel.findOneAndRemove({ _id: authorId });
