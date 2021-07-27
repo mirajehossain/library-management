@@ -13,9 +13,9 @@
 Browse books, authors, request and view Book-Loans
 
 - Library Admin
-Create, update, remove Books and Authors. Accepet, reject Book-Loan requests. Update Book-Loan when book is returned
+Create, update, remove Books and Authors. Accept, reject Book-Loan requests. Update Book-Loan when book is returned
 
-### In addtion to providing the basic RESTful API endpoints and their role based access specified above, your API should also have the following features
+### In addition to providing the basic RESTful API endpoints and their role based access specified above, your API should also have the following features
 - Token Based Authentication (timeout can be as much as you wish)
 - Profile image upload for users (store image anywhere you like)
 - Browse books by author
@@ -23,7 +23,6 @@ Create, update, remove Books and Authors. Accepet, reject Book-Loan requests. Up
 
 ### Installation
 ```
- git clone https://github.com/mirajehossain/library-management.git
  cd library-management
  npm i
 ```
@@ -31,8 +30,13 @@ Create, update, remove Books and Authors. Accepet, reject Book-Loan requests. Up
 ### Run the project
 
 To run the project `npm start`
-
 url: `http://localhost:8000`
+
+
+To run tests: `npm run test`
+
+
+Run on Docker: `docker compose up --build`
 
 
 ***
